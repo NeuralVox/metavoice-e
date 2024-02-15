@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup  # type: ignore
 
 setup(
-    name="fam",
+    name="metavoice-e",
     packages=find_packages(".", exclude=["tests"]),
 )

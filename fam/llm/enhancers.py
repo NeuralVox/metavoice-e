@@ -2,7 +2,9 @@ import os
 from abc import ABC
 from typing import Literal, Optional
 
-from df.enhance import enhance, init_df, load_audio, save_audio
+# from df.enhance import enhance, init_df, load_audio, save_audio
+from resemble_enhance.enhancer.inference import denoise, enhance
+import torchaudio
 from pydub import AudioSegment
 
 
@@ -73,12 +75,12 @@ class DFEnhancer(BaseEnhancer):
 
     def __call__(self, audio_file: str, output_file: Optional[str] = None) -> str:
         output_file = output_file or self.get_output_file(audio_file, "_df")
-
-        audio, _ = load_audio(audio_file, sr=self.df_state.sr())
-
-        enhanced = enhance(self.model, self.df_state, audio)
-
-        save_audio(output_file, enhanced, self.df_state.sr())
+        
+        dwav, sr = torchaudio.load(audio_file)
+        dwav = dwav.mean(dim=0)
+        wav, new_sr = enhance(dwav, sr, device, nfe=nfe, solver=solver, lambd=lambd, tau=tau)
+        wav = wav.cpu()
+        torchaudio.save(output_file, wav, new_sr)
 
         return output_file
 

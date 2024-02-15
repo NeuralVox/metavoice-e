@@ -9,7 +9,7 @@ ninja
 fastapi
 uvicorn
 tyro
-deepfilternet
+resemble-enhance
 pydub
 soundfile
 gradio
